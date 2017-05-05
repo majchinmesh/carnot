@@ -1,26 +1,17 @@
 package com.lol.majchin.carnot;
-import android.app.Activity;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
+import android.os.Handler;
 
 public class MainActivity extends AppCompatActivity {
     // verious textviews for all the timestamps
@@ -44,7 +35,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     // Defining the Volley request queue that handles the URL request concurrently
-    RequestQueue requestQueue;
+    //RequestQueue requestQueue ;
+
+    RequestQueue requestQueue1;
+    RequestQueue requestQueue2;
+    RequestQueue requestQueue3;
+    RequestQueue requestQueue4;
 
     // returns string version of current timestamp
     String GetCurrentTimeStamp(){
@@ -56,27 +52,42 @@ public class MainActivity extends AppCompatActivity {
     // for button 1
     public void refresh_1(View target) {
         tv_start_1.setText( "Start : " + GetCurrentTimeStamp());
-        requestQueue.add(jsonReq_comments);
+        requestQueue1.add(jsonReq_comments);
+
     }
 
     // for button 2
     public void refresh_2(View target) {
         tv_start_2.setText( "Start : " + GetCurrentTimeStamp());
-        requestQueue.add(jsonReq_photos);
+        requestQueue2.add(jsonReq_photos);
     }
 
     // for button 3
     public void refresh_3(View target) {
         tv_start_3.setText( "Start : " + GetCurrentTimeStamp());
-        requestQueue.add(jsonReq_todos);
+        requestQueue3.add(jsonReq_todos);
     }
 
     // for button 4
     public void refresh_4(View target) {
         tv_start_4.setText( "Start : " + GetCurrentTimeStamp());
-        requestQueue.add(jsonReq_posts);
+        requestQueue4.add(jsonReq_posts);
     }
 
+
+    // start the json requests after 5 seconds
+    public void start( final TextView tvs , final RequestQueue RQ ,final JsonArrayRequest JAR ){
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                tvs.setText( "Start : " + GetCurrentTimeStamp());
+                RQ.add(JAR);
+
+            }
+        }, 5000);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +98,12 @@ public class MainActivity extends AppCompatActivity {
         DBH = new DB_helper(this);
 
         // Creates the Volley request queue
-        requestQueue = Volley.newRequestQueue(this);
+        //requestQueue = Volley.newRequestQueue(this);
 
+        requestQueue1 = Volley.newRequestQueue(this);
+        requestQueue2 = Volley.newRequestQueue(this);
+        requestQueue3 = Volley.newRequestQueue(this);
+        requestQueue4 = Volley.newRequestQueue(this);
 
         // Casts all into the TextView found within the main layout XML
         tv_start_1 = (TextView) findViewById(R.id.txt_v_1_start);
@@ -147,7 +162,8 @@ public class MainActivity extends AppCompatActivity {
                         // collect required parameters to pass to the async task of inserting data into the DB
                         DB_Task_Parameters comments_para = new DB_Task_Parameters(DBH , response ,tv_end_save_1  );
                         // start the async task to insert data into DB
-                        new AsyncSaveComments(tv_start_save_1 , tv_end_save_1).execute(comments_para);
+                        //new AsyncSaveComments(tv_start_save_1 , tv_end_save_1).execute(comments_para);
+                        new AsyncSaveComments(tv_start_save_1 , tv_end_save_1).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, comments_para);
                     }
                 },
                 new Response.ErrorListener() {
@@ -169,8 +185,8 @@ public class MainActivity extends AppCompatActivity {
                         // collect required parameters to pass to the async task of inserting data into the DB
                         DB_Task_Parameters photos_para = new DB_Task_Parameters(DBH , response ,tv_end_save_2  );
                         // start the async task to insert data into DB
-                        new AsyncSavePhotos(tv_start_save_2 , tv_end_save_2).execute(photos_para);
-
+                        //new AsyncSavePhotos(tv_start_save_2 , tv_end_save_2).execute(photos_para);
+                        new AsyncSavePhotos(tv_start_save_2 , tv_end_save_2).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, photos_para);
                     }
                 },
                 new Response.ErrorListener() {
@@ -192,7 +208,8 @@ public class MainActivity extends AppCompatActivity {
                         // collect required parameters to pass to the async task of inserting data into the DB
                         DB_Task_Parameters todos_para = new DB_Task_Parameters(DBH , response ,tv_end_save_3  );
                         // start the async task to insert data into DB
-                        new AsyncSaveTodos(tv_start_save_3 , tv_end_save_3).execute(todos_para);
+                        //new AsyncSaveTodos(tv_start_save_3 , tv_end_save_3).execute(todos_para);
+                        new AsyncSaveTodos(tv_start_save_3 , tv_end_save_3).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, todos_para);
                     }
                 },
                 new Response.ErrorListener() {
@@ -214,7 +231,8 @@ public class MainActivity extends AppCompatActivity {
                         // collect required parameters to pass to the async task of inserting data into the DB
                         DB_Task_Parameters posts_para = new DB_Task_Parameters(DBH , response ,tv_end_save_4  );
                         // start the async task to insert data into DB
-                        new AsyncSavePosts(tv_start_save_4 , tv_end_save_4).execute(posts_para);
+                       // new AsyncSavePosts(tv_start_save_4 , tv_end_save_4).execute(posts_para);
+                        new AsyncSavePosts(tv_start_save_4 , tv_end_save_4).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, posts_para);
                     }
                 },
                 new Response.ErrorListener() {
@@ -226,21 +244,11 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        // startrd the json request for comments
-        tv_start_1.setText( "Start : " + GetCurrentTimeStamp());
-        requestQueue.add(jsonReq_comments);
-
-        // startrd the json request for photos
-        tv_start_2.setText( "Start : " + GetCurrentTimeStamp());
-        requestQueue.add(jsonReq_photos);
-
-        // startrd the json request todos
-        tv_start_3.setText( "Start : " + GetCurrentTimeStamp());
-        requestQueue.add(jsonReq_todos);
-
-        // startrd the json request posts
-        tv_start_4.setText( "Start : " + GetCurrentTimeStamp());
-        requestQueue.add(jsonReq_posts);
+        // each of these functions content will be called after 5 seconds
+        start(tv_start_1,requestQueue1,jsonReq_comments);
+        start(tv_start_2,requestQueue2,jsonReq_photos);
+        start(tv_start_3,requestQueue3,jsonReq_todos);
+        start(tv_start_4,requestQueue4,jsonReq_posts);
     }
 
     @Override

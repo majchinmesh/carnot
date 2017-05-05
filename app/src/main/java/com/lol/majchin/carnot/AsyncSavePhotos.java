@@ -29,13 +29,14 @@ public class AsyncSavePhotos extends AsyncTask< DB_Task_Parameters , Void, TextV
 
     @Override
     protected void onPreExecute()
-    {
+    {   Log.i("AsyncSavePhotos "," reached pre ");
         super.onPreExecute();
 
     }
     @Override
     protected TextView doInBackground(DB_Task_Parameters... data)
     {
+        Log.i("AsyncSavePhotos "," reached do in back ");
         JSONArray photos_arr = data[0].jsonArray ;
         DB_helper DBH = data[0].dbHepler ;
         TextView tv_end_save = data[0].tv_end_save ;
@@ -65,6 +66,7 @@ public class AsyncSavePhotos extends AsyncTask< DB_Task_Parameters , Void, TextV
     @Override
     protected void onPostExecute(TextView tv_end_save )
     {
+        Log.i("AsyncSavePhotos "," reached post ");
         super.onPostExecute(tv_end_save);
         tv_end_save.setText("End Save : " + GetCurrentTimeStamp());
         Log.i("Async Task", "Photos Done!");
