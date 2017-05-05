@@ -40,10 +40,7 @@ public class MainActivity extends AppCompatActivity {
     String URL_posts = "https://jsonplaceholder.typicode.com/posts";
 
     // volley request objects
-    JsonArrayRequest jsonReq_comments ;
-    JsonArrayRequest jsonReq_photos ;
-    JsonArrayRequest jsonReq_todos ;
-    JsonArrayRequest jsonReq_posts ;
+    JsonArrayRequest jsonReq_comments , jsonReq_photos , jsonReq_todos , jsonReq_posts ;
 
 
     // Defining the Volley request queue that handles the URL request concurrently
@@ -244,7 +241,6 @@ public class MainActivity extends AppCompatActivity {
         // startrd the json request posts
         tv_start_4.setText( "Start : " + GetCurrentTimeStamp());
         requestQueue.add(jsonReq_posts);
-
     }
 
     @Override
@@ -255,6 +251,3 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-
-
-
