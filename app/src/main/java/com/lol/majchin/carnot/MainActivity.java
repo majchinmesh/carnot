@@ -7,14 +7,20 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 
 public class MainActivity extends AppCompatActivity {
     // verious textviews for all the timestamps
@@ -133,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
         };
         cts_thread.start();
 
+
         // volley json request for comments
         jsonReq_comments = new JsonArrayRequest(URL_comments,
                 new Response.Listener<JSONArray>() {
@@ -140,29 +147,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(JSONArray response) {
                         // json request received / completed for comments
                         tv_end_1.setText( "End : " + GetCurrentTimeStamp());
-                        try {
-                            // here we started with saving
-                            tv_start_save_1.setText( "Start Save : " + GetCurrentTimeStamp());
-                            for(int l=0; l< response.length(); l++){
-                                JSONObject commentObj = response.getJSONObject(l);
-                                int id = commentObj.getInt("id") ;
-                                int pid = commentObj.getInt("postId") ;
-                                String name = commentObj.getString("name");
-                                String email = commentObj.getString("email");
-                                String body = commentObj.getString("body");
-                                DBH.insertComment(id ,pid , name ,email , body);
-                            }
-                            // here we ended saving
-                            tv_end_save_1.setText( "End Save : " + GetCurrentTimeStamp());
-
-                            // for testing purpose
-                            Toast.makeText( getApplicationContext() , DBH.test_1() , Toast.LENGTH_LONG).show();
-                        }
-                        // Try and catch are included to handle any errors due to JSON
-                        catch (JSONException e) {
-                            // If an error occurs, this prints the error to the log
-                            e.printStackTrace();
-                        }
+                        // collect required parameters to pass to the async task of inserting data into the DB
+                        DB_Task_Parameters comments_para = new DB_Task_Parameters(DBH , response ,tv_end_save_1  );
+                        // start the async task to insert data into DB
+                        new AsyncSaveComments(tv_start_save_1 , tv_end_save_1).execute(comments_para);
                     }
                 },
                 new Response.ErrorListener() {
@@ -181,30 +169,11 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(JSONArray response) {
                         // json request received / completed for photos
                         tv_end_2.setText( "End : " + GetCurrentTimeStamp());
-                        try {
-                            // here we started with saving
-                            tv_start_save_2.setText( "Start Save : " + GetCurrentTimeStamp());
-                            for(int l=0; l< response.length(); l++){
-                                JSONObject photoObj = response.getJSONObject(l);
-                                int id = photoObj.getInt("id") ;
-                                int aid = photoObj.getInt("albumId") ;
-                                String title = photoObj.getString("title");
-                                String url = photoObj.getString("url");
-                                String turl = photoObj.getString("thumbnailUrl");
-                                DBH.insertPhotos(id ,aid , title ,url , turl);
-                            }
-                            // here we ended saving
-                            tv_end_save_2.setText( "End Save : " + GetCurrentTimeStamp());
+                        // collect required parameters to pass to the async task of inserting data into the DB
+                        DB_Task_Parameters photos_para = new DB_Task_Parameters(DBH , response ,tv_end_save_2  );
+                        // start the async task to insert data into DB
+                        new AsyncSavePhotos(tv_start_save_2 , tv_end_save_2).execute(photos_para);
 
-                            // for testing purpose
-                            Toast.makeText( getApplicationContext() , DBH.test_2() , Toast.LENGTH_LONG).show();
-
-                        }
-                        // Try and catch are included to handle any errors due to JSON
-                        catch (JSONException e) {
-                            // If an error occurs, this prints the error to the log
-                            e.printStackTrace();
-                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -223,28 +192,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(JSONArray response) {
                         // json request received / completed for todos
                         tv_end_3.setText( "End : " + GetCurrentTimeStamp());
-                        try {
-                            // here we started with saving
-                            tv_start_save_3.setText( "Start Save : " + GetCurrentTimeStamp());
-                            for(int l=0; l< response.length(); l++){
-                                JSONObject todoObj = response.getJSONObject(l);
-                                int id = todoObj.getInt("id") ;
-                                int uid = todoObj.getInt("userId") ;
-                                String title = todoObj.getString("title");
-                                String completed = todoObj.getString("completed");
-                                DBH.insertTodos(id ,uid , title ,completed);
-                            }
-                            // here we ended saving
-                            tv_end_save_3.setText( "End Save : " + GetCurrentTimeStamp());
-
-                            // for testing purpose
-                            Toast.makeText( getApplicationContext() , DBH.test_3() , Toast.LENGTH_LONG).show();
-                        }
-                        // Try and catch are included to handle any errors due to JSON
-                        catch (JSONException e) {
-                            // If an error occurs, this prints the error to the log
-                            e.printStackTrace();
-                        }
+                        // collect required parameters to pass to the async task of inserting data into the DB
+                        DB_Task_Parameters todos_para = new DB_Task_Parameters(DBH , response ,tv_end_save_3  );
+                        // start the async task to insert data into DB
+                        new AsyncSaveTodos(tv_start_save_3 , tv_end_save_3).execute(todos_para);
                     }
                 },
                 new Response.ErrorListener() {
@@ -263,28 +214,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(JSONArray response) {
                         // json request received / completed for posts
                         tv_end_4.setText( "End : " + GetCurrentTimeStamp());
-                        try {
-                            // here we started with saving
-                            tv_start_save_4.setText( "Start Save : " + GetCurrentTimeStamp());
-                            for(int l=0; l< response.length(); l++){
-                                JSONObject photoObj = response.getJSONObject(l);
-                                int id = photoObj.getInt("id") ;
-                                int uid = photoObj.getInt("userId") ;
-                                String title = photoObj.getString("title");
-                                String body = photoObj.getString("body");
-                                DBH.insertPosts(id ,uid , title ,body);
-                            }
-                            // here we ended saving
-                            tv_end_save_4.setText( "End Save : " + GetCurrentTimeStamp());
-
-                            // for testing purpose
-                            Toast.makeText( getApplicationContext() , DBH.test_4() , Toast.LENGTH_LONG).show();
-                        }
-                        // Try and catch are included to handle any errors due to JSON
-                        catch (JSONException e) {
-                            // If an error occurs, this prints the error to the log
-                            e.printStackTrace();
-                        }
+                        // collect required parameters to pass to the async task of inserting data into the DB
+                        DB_Task_Parameters posts_para = new DB_Task_Parameters(DBH , response ,tv_end_save_4  );
+                        // start the async task to insert data into DB
+                        new AsyncSavePosts(tv_start_save_4 , tv_end_save_4).execute(posts_para);
                     }
                 },
                 new Response.ErrorListener() {
@@ -322,3 +255,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
+
+
+

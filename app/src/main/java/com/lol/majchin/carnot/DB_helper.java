@@ -52,7 +52,7 @@ class DB_helper extends SQLiteOpenHelper {
 
     }
 
-    public void insertPhotos(Integer id , Integer aid , String title, String url, String thumbnailUrl ) {
+    public void insertPhoto(Integer id , Integer aid , String title, String url, String thumbnailUrl ) {
         ContentValues cv=new ContentValues();
 
         cv.put("id",id);
@@ -65,7 +65,7 @@ class DB_helper extends SQLiteOpenHelper {
     }
 
 
-    public void insertTodos(Integer id , Integer uid , String title, String completed ) {
+    public void insertTodo(Integer id , Integer uid , String title, String completed ) {
         ContentValues cv=new ContentValues();
 
         cv.put("id",id);
@@ -77,7 +77,7 @@ class DB_helper extends SQLiteOpenHelper {
     }
 
 
-    public void insertPosts(Integer id , Integer uid , String title, String body ) {
+    public void insertPost(Integer id , Integer uid , String title, String body ) {
         ContentValues cv=new ContentValues();
 
         cv.put("id",id);
