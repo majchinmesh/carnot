@@ -13,6 +13,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import android.os.Handler;
 
+import java.util.concurrent.CyclicBarrier;
+
 public class MainActivity extends AppCompatActivity {
     // verious textviews for all the timestamps
     TextView tv_start_1 , tv_end_1 , tv_start_save_1 , tv_end_save_1 ;
@@ -75,19 +77,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // start the json requests after 5 seconds
-    public void start( final TextView tvs , final RequestQueue RQ ,final JsonArrayRequest JAR ){
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                tvs.setText( "Start : " + GetCurrentTimeStamp());
-                RQ.add(JAR);
-
-            }
-        }, 5000);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
         tv_cts = (TextView) findViewById(R.id.txt_v_cts);
 
 
-
         // for current time stamp
         // contineously changes the value of current time stamp field
         Thread cts_thread = new Thread() {
@@ -158,12 +146,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         // json request received / completed for comments
-                        tv_end_1.setText( "End : " + GetCurrentTimeStamp());
+                        tv_end_1.setText("End : " + GetCurrentTimeStamp());
                         // collect required parameters to pass to the async task of inserting data into the DB
-                        DB_Task_Parameters comments_para = new DB_Task_Parameters(DBH , response ,tv_end_save_1  );
+                        DB_Task_Parameters comments_para = new DB_Task_Parameters(DBH, response, tv_end_save_1);
                         // start the async task to insert data into DB
                         //new AsyncSaveComments(tv_start_save_1 , tv_end_save_1).execute(comments_para);
-                        new AsyncSaveComments(tv_start_save_1 , tv_end_save_1).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, comments_para);
+                        new AsyncSaveComments(tv_start_save_1, tv_end_save_1).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, comments_para);
                     }
                 },
                 new Response.ErrorListener() {
@@ -181,12 +169,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         // json request received / completed for photos
-                        tv_end_2.setText( "End : " + GetCurrentTimeStamp());
+                        tv_end_2.setText("End : " + GetCurrentTimeStamp());
                         // collect required parameters to pass to the async task of inserting data into the DB
-                        DB_Task_Parameters photos_para = new DB_Task_Parameters(DBH , response ,tv_end_save_2  );
+                        DB_Task_Parameters photos_para = new DB_Task_Parameters(DBH, response, tv_end_save_2);
                         // start the async task to insert data into DB
                         //new AsyncSavePhotos(tv_start_save_2 , tv_end_save_2).execute(photos_para);
-                        new AsyncSavePhotos(tv_start_save_2 , tv_end_save_2).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, photos_para);
+                        new AsyncSavePhotos(tv_start_save_2, tv_end_save_2).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, photos_para);
                     }
                 },
                 new Response.ErrorListener() {
@@ -204,12 +192,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         // json request received / completed for todos
-                        tv_end_3.setText( "End : " + GetCurrentTimeStamp());
+                        tv_end_3.setText("End : " + GetCurrentTimeStamp());
                         // collect required parameters to pass to the async task of inserting data into the DB
-                        DB_Task_Parameters todos_para = new DB_Task_Parameters(DBH , response ,tv_end_save_3  );
+                        DB_Task_Parameters todos_para = new DB_Task_Parameters(DBH, response, tv_end_save_3);
                         // start the async task to insert data into DB
                         //new AsyncSaveTodos(tv_start_save_3 , tv_end_save_3).execute(todos_para);
-                        new AsyncSaveTodos(tv_start_save_3 , tv_end_save_3).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, todos_para);
+                        new AsyncSaveTodos(tv_start_save_3, tv_end_save_3).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, todos_para);
                     }
                 },
                 new Response.ErrorListener() {
@@ -227,12 +215,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         // json request received / completed for posts
-                        tv_end_4.setText( "End : " + GetCurrentTimeStamp());
+                        tv_end_4.setText("End : " + GetCurrentTimeStamp());
                         // collect required parameters to pass to the async task of inserting data into the DB
-                        DB_Task_Parameters posts_para = new DB_Task_Parameters(DBH , response ,tv_end_save_4  );
+                        DB_Task_Parameters posts_para = new DB_Task_Parameters(DBH, response, tv_end_save_4);
                         // start the async task to insert data into DB
-                       // new AsyncSavePosts(tv_start_save_4 , tv_end_save_4).execute(posts_para);
-                        new AsyncSavePosts(tv_start_save_4 , tv_end_save_4).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, posts_para);
+                        // new AsyncSavePosts(tv_start_save_4 , tv_end_save_4).execute(posts_para);
+                        new AsyncSavePosts(tv_start_save_4, tv_end_save_4).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, posts_para);
                     }
                 },
                 new Response.ErrorListener() {
@@ -245,11 +233,137 @@ public class MainActivity extends AppCompatActivity {
         );
 
         // each of these functions content will be called after 5 seconds
+        /*
         start(tv_start_1,requestQueue1,jsonReq_comments);
         start(tv_start_2,requestQueue2,jsonReq_photos);
         start(tv_start_3,requestQueue3,jsonReq_todos);
         start(tv_start_4,requestQueue4,jsonReq_posts);
+        */
+
+        WAITSTART();
+
     }
+
+
+    // THIS FUNCTION STARTS ALL THE DOWNLOADS AT THE SAME TIME AS SOON AS THE FUNCTION IS CALLED
+    void START(){
+        final CyclicBarrier gate = new CyclicBarrier(5);
+
+        Thread t1 = new Thread() {
+            public void run() {
+                try {
+                    gate.await();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tv_start_1.setText("Start : " + GetCurrentTimeStamp());
+                        }
+                    });
+                    requestQueue1.add(jsonReq_comments);
+                } catch (java.util.concurrent.BrokenBarrierException e) {
+                    e.printStackTrace();
+                } catch (java.lang.InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+
+
+        Thread t2 = new Thread() {
+            public void run() {
+                try {
+                    gate.await();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tv_start_2.setText("Start : " + GetCurrentTimeStamp());
+                        }
+                    });
+                    requestQueue2.add(jsonReq_photos);
+                } catch (java.util.concurrent.BrokenBarrierException e) {
+                    e.printStackTrace();
+                } catch (java.lang.InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+
+
+        Thread t3 = new Thread() {
+            public void run() {
+                try {
+                    gate.await();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tv_start_3.setText("Start : " + GetCurrentTimeStamp());
+                        }
+                    });
+                    requestQueue3.add(jsonReq_todos);
+                } catch (java.util.concurrent.BrokenBarrierException e) {
+                    e.printStackTrace();
+                } catch (java.lang.InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+
+
+        Thread t4 = new Thread() {
+            public void run() {
+                try {
+                    gate.await();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tv_start_4.setText("Start : " + GetCurrentTimeStamp());
+                        }
+                    });
+                    requestQueue4.add(jsonReq_posts);
+                } catch (java.util.concurrent.BrokenBarrierException e) {
+                    e.printStackTrace();
+                } catch (java.lang.InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+
+
+        t1.start();
+        t2.start();
+        t3.start();
+        t4.start();
+
+        try {
+            gate.await();
+        } catch (java.util.concurrent.BrokenBarrierException e) {
+            e.printStackTrace();
+        } catch (java.lang.InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    // THIS FUNCTION CALLS THE START FUNVTION 5 SECONDS AFTER IT IS CALLED
+    // AND IT IS CALLED AS SOON AS THE ONCREATE IS LOADED
+    public void WAITSTART(){
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                START();
+
+            }
+        }, 5000);
+    }
+
 
     @Override
     public void onDestroy() {
