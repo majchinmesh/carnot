@@ -1,6 +1,7 @@
 package com.lol.majchin.carnot;
 
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,8 +49,6 @@ public class AsyncSaveTodos extends AsyncTask< DB_Task_Parameters , Void, TextVi
         try {
             for (int l = 0; l < todos_arr.length(); l++) {
 
-                // for Rows in DB field
-                final int i = l+1 ;
 
                 todoObj = todos_arr.getJSONObject(l);
                 id = todoObj.getInt("id");
@@ -58,12 +57,14 @@ public class AsyncSaveTodos extends AsyncTask< DB_Task_Parameters , Void, TextVi
                 completed = todoObj.getString("completed");
                 DBH.insertTodo(id, uid, title, completed );
 
+                final int i = DBH.getNoOfRows("todos","title")  ;
                 myact.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         tv_rows_in_db.setText("Rows In DB : " + Integer.toString(i));
                     }
                 });
+                SystemClock.sleep(100);
             }
         }catch (JSONException e) {
             // If an error occurs, this prints the error to the log

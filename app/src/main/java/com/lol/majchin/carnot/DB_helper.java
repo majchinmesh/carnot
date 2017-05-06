@@ -121,5 +121,33 @@ class DB_helper extends SQLiteOpenHelper {
     }
 
 
+    public int getNoOfRows(String TABLE_NAME , String FIELD_NAME  ) {
+        String countQuery = "SELECT  * FROM " + TABLE_NAME+  " WHERE LENGTH(" + FIELD_NAME + ") < 35 " ;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int cnt = cursor.getCount();
+        cursor.close();
+        return cnt;
+    }
+
+
+    public void removeAll()
+    {
+        // db.delete(String tableName, String whereClause, String[] whereArgs);
+        // If whereClause is null, it will delete all rows.
+        SQLiteDatabase db = getWritableDatabase(); // helper is object extends SQLiteOpenHelper
+        db.delete("comments", null, null);
+        db.delete("photos", null, null);
+        db.delete("todos", null, null);
+        db.delete("posts", null, null);
+    }
+
+    public void remove(String TABLE_NAME)
+    {
+        // db.delete(String tableName, String whereClause, String[] whereArgs);
+        // If whereClause is null, it will delete all rows.
+        SQLiteDatabase db = getWritableDatabase(); // helper is object extends SQLiteOpenHelper
+        db.delete(TABLE_NAME, null, null);
+    }
 
 }

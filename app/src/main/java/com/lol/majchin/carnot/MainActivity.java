@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     // the onclick listener functions
     // for button 1
     public void refresh_1(View target) {
+        DBH.remove("comments");
         tv_start_1.setText( "Start : " + GetCurrentTimeStamp());
         requestQueue1.add(jsonReq_comments);
 
@@ -60,18 +61,21 @@ public class MainActivity extends AppCompatActivity {
 
     // for button 2
     public void refresh_2(View target) {
+        DBH.remove("photos");
         tv_start_2.setText( "Start : " + GetCurrentTimeStamp());
         requestQueue2.add(jsonReq_photos);
     }
 
     // for button 3
     public void refresh_3(View target) {
+        DBH.remove("todos");
         tv_start_3.setText( "Start : " + GetCurrentTimeStamp());
         requestQueue3.add(jsonReq_todos);
     }
 
     // for button 4
     public void refresh_4(View target) {
+        DBH.remove("posts");
         tv_start_4.setText( "Start : " + GetCurrentTimeStamp());
         requestQueue4.add(jsonReq_posts);
     }
@@ -85,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         // database helper
         DBH = new DB_helper(this);
+        DBH.removeAll();
 
         // Creates the Volley request queue
         //requestQueue = Volley.newRequestQueue(this);

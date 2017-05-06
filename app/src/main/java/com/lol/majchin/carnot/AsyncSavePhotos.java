@@ -1,6 +1,7 @@
 package com.lol.majchin.carnot;
 
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,11 +47,11 @@ public class AsyncSavePhotos extends AsyncTask< DB_Task_Parameters , Void, TextV
         int id , aid ;
         String title , url , turl ;
 
+
         try {
             for (int l = 0; l < photos_arr.length(); l++) {
 
                 // for Rows in DB field
-                final int i = l+1 ;
 
                 photoObj = photos_arr.getJSONObject(l);
                 id = photoObj.getInt("id");
@@ -60,12 +61,14 @@ public class AsyncSavePhotos extends AsyncTask< DB_Task_Parameters , Void, TextV
                 turl = photoObj.getString("thumbnailUrl");
                 DBH.insertPhoto(id, aid, title, url, turl);
 
+                final int i = DBH.getNoOfRows("photos","title")  ;
                 myact.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         tv_rows_in_db.setText("Rows In DB : " + Integer.toString(i));
                     }
                 });
+                SystemClock.sleep(100);
             }
         }catch (JSONException e) {
             // If an error occurs, this prints the error to the log

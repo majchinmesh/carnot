@@ -2,6 +2,7 @@ package com.lol.majchin.carnot;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,10 +54,6 @@ public class AsyncSaveComments extends AsyncTask< DB_Task_Parameters , Void, Tex
 
         try {
             for (int l = 0; l < comments_arr.length(); l++) {
-
-                // for Rows in DB field
-                final int i = l+1 ;
-
                 commentObj = comments_arr.getJSONObject(l);
                 id = commentObj.getInt("id");
                 pid = commentObj.getInt("postId");
@@ -65,12 +62,15 @@ public class AsyncSaveComments extends AsyncTask< DB_Task_Parameters , Void, Tex
                 body = commentObj.getString("body");
                 DBH.insertComment(id, pid, name, email, body);
 
+                final int i = DBH.getNoOfRows("comments","name")  ;
                 myact.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         tv_rows_in_db.setText("Rows In DB : " + Integer.toString(i));
                     }
                 });
+
+                SystemClock.sleep(100);
             }
         }catch (JSONException e) {
             // If an error occurs, this prints the error to the log
