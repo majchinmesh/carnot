@@ -83,6 +83,18 @@
                     android:id="@+id/txt_v_1_end_save"
                     android:textColor="#000000" />
 
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Rows In DB : "
+                    android:textSize="11sp"
+                    android:id="@+id/txt_v_1_rows_in_db"
+                    android:textColor="#000000" />
+
+
                 </LinearLayout>
 
 
@@ -135,6 +147,17 @@
                     android:textSize="11sp"
                     android:id="@+id/txt_v_2_end_save"
                     android:textColor="#000000" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Rows In DB : "
+                    android:textSize="11sp"
+                    android:id="@+id/txt_v_2_rows_in_db"
+                    android:textColor="#000000" />
+
 
             </LinearLayout>
 
@@ -197,7 +220,20 @@
                     android:id="@+id/txt_v_3_end_save"
                     android:textColor="#000000" />
 
-                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Rows In DB : "
+                    android:textSize="11sp"
+                    android:id="@+id/txt_v_3_rows_in_db"
+                    android:textColor="#000000" />
+
+
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -247,7 +283,21 @@
                     android:id="@+id/txt_v_4_end_save"
                     android:textColor="#000000" />
 
-                </LinearLayout>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Rows In DB : "
+                    android:textSize="11sp"
+                    android:id="@+id/txt_v_4_rows_in_db"
+                    android:textColor="#000000" />
+
+
+
+            </LinearLayout>
 
             </LinearLayout>
 

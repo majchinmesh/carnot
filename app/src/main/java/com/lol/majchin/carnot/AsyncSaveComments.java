@@ -1,5 +1,6 @@
 package com.lol.majchin.carnot;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
@@ -42,12 +43,20 @@ public class AsyncSaveComments extends AsyncTask< DB_Task_Parameters , Void, Tex
         JSONArray comments_arr = data[0].jsonArray ;
         DB_helper DBH = data[0].dbHepler ;
         TextView tv_end_save = data[0].tv_end_save ;
+        final TextView tv_rows_in_db = data[0].tv_rows_in_db ;
+        MainActivity myact = data[0].myact ;
         JSONObject commentObj ;
         int id , pid ;
         String name , email , body ;
 
+        //Activity myact = new MainActivity() ;
+
         try {
             for (int l = 0; l < comments_arr.length(); l++) {
+
+                // for Rows in DB field
+                final int i = l+1 ;
+
                 commentObj = comments_arr.getJSONObject(l);
                 id = commentObj.getInt("id");
                 pid = commentObj.getInt("postId");
@@ -55,6 +64,13 @@ public class AsyncSaveComments extends AsyncTask< DB_Task_Parameters , Void, Tex
                 email = commentObj.getString("email");
                 body = commentObj.getString("body");
                 DBH.insertComment(id, pid, name, email, body);
+
+                myact.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tv_rows_in_db.setText("Rows In DB : " + Integer.toString(i));
+                    }
+                });
             }
         }catch (JSONException e) {
             // If an error occurs, this prints the error to the log

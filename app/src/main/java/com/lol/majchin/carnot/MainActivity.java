@@ -17,10 +17,10 @@ import java.util.concurrent.CyclicBarrier;
 
 public class MainActivity extends AppCompatActivity {
     // verious textviews for all the timestamps
-    TextView tv_start_1 , tv_end_1 , tv_start_save_1 , tv_end_save_1 ;
-    TextView tv_start_2 , tv_end_2 , tv_start_save_2 , tv_end_save_2 ;
-    TextView tv_start_3 , tv_end_3 , tv_start_save_3 , tv_end_save_3 ;
-    TextView tv_start_4 , tv_end_4 , tv_start_save_4 , tv_end_save_4 ;
+    TextView tv_start_1 , tv_end_1 , tv_start_save_1 , tv_end_save_1 , tv_rows_in_db_1 ;
+    TextView tv_start_2 , tv_end_2 , tv_start_save_2 , tv_end_save_2 , tv_rows_in_db_2 ;
+    TextView tv_start_3 , tv_end_3 , tv_start_save_3 , tv_end_save_3 , tv_rows_in_db_3 ;
+    TextView tv_start_4 , tv_end_4 , tv_start_save_4 , tv_end_save_4 , tv_rows_in_db_4 ;
     TextView tv_cts ;
 
     // database helper object
@@ -99,21 +99,25 @@ public class MainActivity extends AppCompatActivity {
         tv_end_1 = (TextView) findViewById(R.id.txt_v_1_end);
         tv_start_save_1 = (TextView) findViewById(R.id.txt_v_1_start_save);
         tv_end_save_1 = (TextView) findViewById(R.id.txt_v_1_end_save);
+        tv_rows_in_db_1 = (TextView) findViewById(R.id.txt_v_1_rows_in_db);
 
         tv_start_2 = (TextView) findViewById(R.id.txt_v_2_start);
         tv_end_2 = (TextView) findViewById(R.id.txt_v_2_end);
         tv_start_save_2 = (TextView) findViewById(R.id.txt_v_2_start_save);
         tv_end_save_2 = (TextView) findViewById(R.id.txt_v_2_end_save);
+        tv_rows_in_db_2 = (TextView) findViewById(R.id.txt_v_2_rows_in_db);
 
         tv_start_3 = (TextView) findViewById(R.id.txt_v_3_start);
         tv_end_3 = (TextView) findViewById(R.id.txt_v_3_end);
         tv_start_save_3 = (TextView) findViewById(R.id.txt_v_3_start_save);
         tv_end_save_3 = (TextView) findViewById(R.id.txt_v_3_end_save);
+        tv_rows_in_db_3 = (TextView) findViewById(R.id.txt_v_3_rows_in_db);
 
         tv_start_4 = (TextView) findViewById(R.id.txt_v_4_start);
         tv_end_4 = (TextView) findViewById(R.id.txt_v_4_end);
         tv_start_save_4 = (TextView) findViewById(R.id.txt_v_4_start_save);
         tv_end_save_4 = (TextView) findViewById(R.id.txt_v_4_end_save);
+        tv_rows_in_db_4 = (TextView) findViewById(R.id.txt_v_4_rows_in_db);
 
         tv_cts = (TextView) findViewById(R.id.txt_v_cts);
 
@@ -148,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                         // json request received / completed for comments
                         tv_end_1.setText("End : " + GetCurrentTimeStamp());
                         // collect required parameters to pass to the async task of inserting data into the DB
-                        DB_Task_Parameters comments_para = new DB_Task_Parameters(DBH, response, tv_end_save_1);
+                        DB_Task_Parameters comments_para = new DB_Task_Parameters(DBH, response, tv_end_save_1 , tv_rows_in_db_1,MainActivity.this);
                         // start the async task to insert data into DB
                         //new AsyncSaveComments(tv_start_save_1 , tv_end_save_1).execute(comments_para);
                         new AsyncSaveComments(tv_start_save_1, tv_end_save_1).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, comments_para);
@@ -171,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                         // json request received / completed for photos
                         tv_end_2.setText("End : " + GetCurrentTimeStamp());
                         // collect required parameters to pass to the async task of inserting data into the DB
-                        DB_Task_Parameters photos_para = new DB_Task_Parameters(DBH, response, tv_end_save_2);
+                        DB_Task_Parameters photos_para = new DB_Task_Parameters(DBH, response, tv_end_save_2, tv_rows_in_db_2,MainActivity.this );
                         // start the async task to insert data into DB
                         //new AsyncSavePhotos(tv_start_save_2 , tv_end_save_2).execute(photos_para);
                         new AsyncSavePhotos(tv_start_save_2, tv_end_save_2).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, photos_para);
@@ -194,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                         // json request received / completed for todos
                         tv_end_3.setText("End : " + GetCurrentTimeStamp());
                         // collect required parameters to pass to the async task of inserting data into the DB
-                        DB_Task_Parameters todos_para = new DB_Task_Parameters(DBH, response, tv_end_save_3);
+                        DB_Task_Parameters todos_para = new DB_Task_Parameters(DBH, response, tv_end_save_3, tv_rows_in_db_3,MainActivity.this);
                         // start the async task to insert data into DB
                         //new AsyncSaveTodos(tv_start_save_3 , tv_end_save_3).execute(todos_para);
                         new AsyncSaveTodos(tv_start_save_3, tv_end_save_3).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, todos_para);
@@ -217,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                         // json request received / completed for posts
                         tv_end_4.setText("End : " + GetCurrentTimeStamp());
                         // collect required parameters to pass to the async task of inserting data into the DB
-                        DB_Task_Parameters posts_para = new DB_Task_Parameters(DBH, response, tv_end_save_4);
+                        DB_Task_Parameters posts_para = new DB_Task_Parameters(DBH, response, tv_end_save_4, tv_rows_in_db_4,MainActivity.this);
                         // start the async task to insert data into DB
                         // new AsyncSavePosts(tv_start_save_4 , tv_end_save_4).execute(posts_para);
                         new AsyncSavePosts(tv_start_save_4, tv_end_save_4).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, posts_para);
